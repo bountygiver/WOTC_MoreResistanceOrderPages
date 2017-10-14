@@ -3,7 +3,8 @@ class UIStrategyCard_Multi extends UIStrategyPolicy;
 var int FactionStartIndex;
 var array<name> AllFactions;
 
-var UIButton NextFactionButton, PrevFactionButton;
+//var UIButton NextFactionButton, PrevFactionButton;
+var UIStrategyPolicy_LeftRightButton NextFactionButton, PrevFactionButton;
 
 var UIImage FactionMaskA, FactionMaskB, FactionMaskC;
 var array<UIImage> FactionMasks;
@@ -12,12 +13,6 @@ var UIList PrevFactions, NextFactions;
 
 simulated function OnInit()
 {
-	NextFactions = Spawn(class'UIList', self);
-	NextFactions.InitList('ListNextPageFactions', 1780, 530, 130, 185);
-
-	PrevFactions = Spawn(class'UIList', self);
-	PrevFactions.InitList('ListPrevPageFactions', 0, 530, 150, 185);
-
 	FactionMasks.AddItem(none);
 
 	FactionMaskA = Spawn(class'UIImage', self);
@@ -48,7 +43,7 @@ simulated function OnInit()
 
 	if (AllFactions.Length > 3)
 	{
-		NextFactionButton = Spawn(class'UIButton', self);
+/*		NextFactionButton = Spawn(class'UIButton', self);
 		NextFactionButton.bAnimateOnInit = false;
 		NextFactionButton.InitButton(, class'UIPhotoboothReview'.default.m_strNext, NextFactionPage);
 		NextFactionButton.SetPosition(1770, 500);
@@ -57,15 +52,35 @@ simulated function OnInit()
 		PrevFactionButton.bAnimateOnInit = false;
 		PrevFactionButton.InitButton(, class'UIPhotoboothReview'.default.m_strPrevious, PrevFactionPage);
 		PrevFactionButton.SetPosition(0, 500);
-		PrevFactionButton.SetDisabled(true);
+		PrevFactionButton.SetDisabled(true);*/
 
-		if (`ISCONTROLLERACTIVE)
+		NextFactionButton = Spawn(class'UIStrategyPolicy_LeftRightButton', self);
+		NextFactionButton.InitButton(NextFactionPage);
+		NextFactionButton.SetOrigin(class'UIUtilities'.const.ANCHOR_TOP_RIGHT);
+		NextFactionButton.SetAnchor(class'UIUtilities'.const.ANCHOR_TOP_RIGHT);
+		NextFactionButton.SetY(281);
+
+		PrevFactionButton = Spawn(class'UIStrategyPolicy_LeftRightButton', self);
+		PrevFactionButton.InitButton(PrevFactionPage);
+		PrevFactionButton.MC.SetNum("_xscale", -100);
+		PrevFactionButton.SetY(281);
+		PrevFactionButton.SetX(PrevFactionButton.Width + 2);
+		PrevFactionButton.SetVisible(false);
+
+		NextFactions = Spawn(class'UIList', self);
+		NextFactions.InitList('ListNextPageFactions', 1780, 530, 130, 185);
+
+		PrevFactions = Spawn(class'UIList', self);
+		PrevFactions.InitList('ListPrevPageFactions', 0, 530, 150, 185);
+
+
+/*		if (`ISCONTROLLERACTIVE)
 		{
 			PrevFactionButton.SetStyle(eUIButtonStyle_HOTLINK_WHEN_SANS_MOUSE);
 			PrevFactionButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ class'UIUtilities_Input'.const.FXS_BUTTON_LBUMPER);
 			NextFactionButton.SetStyle(eUIButtonStyle_HOTLINK_WHEN_SANS_MOUSE);
 			NextFactionButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ class'UIUtilities_Input'.const.FXS_BUTTON_RBUMPER);
-		}
+		}*/
 	}
 }
 
@@ -177,7 +192,7 @@ function RealizeCurrentPage()
 	}
 }
 
-function NextFactionPage(UIButton btn_clicked)
+function NextFactionPage(UIStrategyPolicy_LeftRightButton btn_clicked)
 {
 	local int i;
 	if (FactionStartIndex + 3 < AllFactions.Length)
@@ -197,14 +212,14 @@ function NextFactionPage(UIButton btn_clicked)
 		if (FactionStartIndex + 3 >= AllFactions.Length)
 		{
 			FactionStartIndex = AllFactions.Length - 3;
-			NextFactionButton.SetDisabled(true);
+			NextFactionButton.SetVisible(false);
 		}
 
-		PrevFactionButton.SetDisabled(false);
+		PrevFactionButton.SetVisible(true);
 	}
 }
 
-function PrevFactionPage(UIButton btn_clicked)
+function PrevFactionPage(UIStrategyPolicy_LeftRightButton btn_clicked)
 {
 	local int i;
 	if (FactionStartIndex > 0)
@@ -224,10 +239,10 @@ function PrevFactionPage(UIButton btn_clicked)
 		if (FactionStartIndex <= 0)
 		{
 			FactionStartIndex = 0;
-			PrevFactionButton.SetDisabled(true);
+			PrevFactionButton.SetVisible(false);
 		}
 
-		NextFactionButton.SetDisabled(false);
+		NextFactionButton.SetVisible(true);
 	}
 }
 
@@ -375,4 +390,13 @@ function XComGameState_ResistanceFaction GetFaction(int Index)
 	}
 
 	return none;
+}
+
+
+
+simulated function UpdateNavHelp()
+{
+	super.UpdateNavHelp();
+	if (`ISCONTROLLERACTIVE)
+		NavHelp.AddLeftHelp(class'UIPhotoboothReview'.default.m_strPrevious $ " / " $ class'UIPhotoboothReview'.default.m_strNext, class'UIUtilities_Input'.const.ICON_LBRB_L1R1);
 }

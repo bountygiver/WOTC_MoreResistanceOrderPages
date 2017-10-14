@@ -17,6 +17,9 @@
     <Folder Include="Src\MoreResistanceOrderpages\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\MoreResistanceOrderPagesContent.upk">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\XComEditor.ini" />
@@ -24,6 +27,9 @@
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
     <Content Include="Src\MoreResistanceOrderpages\Classes\UIStrategyCard_Multi.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\MoreResistanceOrderpages\Classes\UIStrategyPolicy_LeftRightButton.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\MoreResistanceOrderpages\Classes\X2DownloadableContentInfo_MoreResistanceOrderpages.uc" />
